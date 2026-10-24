@@ -1,0 +1,7 @@
+{
+  "name": "AsyncLocations",
+  "description": "Valheim 1.0 runs on Unity 6, which can copy objects on worker threads (InstantiateAsync). This BepInEx mod uses it so ruins, towers, fortresses and dungeon entrances load in with noticeably less stutter. 100% vibe coded.",
+  "version_number": "1.0.0",
+  "website_url": "https://github.com/vont-bongo/Valheim-AsyncLocations",
+  "dependencies": []
+}

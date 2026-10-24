@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Build: dotnet build -c Release -p:ValheimDir="<your Valheim folder with BepInEx installed>"
+       The DLL lands in bin/Release/netstandard2.1/AsyncLocations.dll; copy it to <Valheim>/BepInEx/plugins. -->
+  <PropertyGroup>
+    <AssemblyName>AsyncLocations</AssemblyName>
+    <RootNamespace>AsyncLocations</RootNamespace>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>11.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <NoStdLib>true</NoStdLib>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Deterministic>true</Deterministic>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <Optimize>true</Optimize>
+    <DebugType>portable</DebugType>
+    <!-- No local folder names in the DLL (the debug file's path). -->
+    <PathMap>$(MSBuildProjectDirectory)=/_/</PathMap>
+    <ValheimDir Condition="'$(ValheimDir)' == '' And '$(OS)' == 'Windows_NT'">C:\Program Files (x86)\Steam\steamapps\common\Valheim</ValheimDir>
+    <ValheimDir Condition="'$(ValheimDir)' == ''">$(HOME)/.local/share/Steam/steamapps/common/Valheim</ValheimDir>
+    <ManagedDir>$(ValheimDir)/valheim_Data/Managed</ManagedDir>
+    <BepInExCore>$(ValheimDir)/BepInEx/core</BepInExCore>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Private game members (LocationProxy.m_instance, ZoneSystem.m_loadingObjectsInZones, ...) at compile time. -->
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3" PrivateAssets="all" />
+    <Reference Include="$(ManagedDir)/mscorlib.dll" Private="false" />
+    <Reference Include="$(ManagedDir)/netstandard.dll" Private="false" />
+    <Reference Include="$(ManagedDir)/System.dll" Private="false" />
+    <Reference Include="$(ManagedDir)/System.Core.dll" Private="false" />
+    <Reference Include="$(ManagedDir)/assembly_valheim.dll" Publicize="true" Private="false" />
+    <Reference Include="$(ManagedDir)/assembly_utils.dll" Publicize="true" Private="false" />
+    <Reference Include="$(ManagedDir)/SoftReferenceableAssets.dll" Private="false" />
+    <Reference Include="$(ManagedDir)/UnityEngine.dll" Private="false" />
+    <Reference Include="$(ManagedDir)/UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="$(BepInExCore)/BepInEx.dll" Private="false" />
+    <Reference Include="$(BepInExCore)/0Harmony.dll" Private="false" />
+  </ItemGroup>
+</Project>
