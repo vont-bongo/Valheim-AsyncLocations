@@ -6,8 +6,7 @@
   for `BelowNormal` through the game's own loading-budget API. Measured at 120 fps: large locations load about a third sooner
   (317 -> 217 ms), the 16 Morkhalla rooms of a dungeon in about 1.8 s instead of 5.8, with frames as smooth as at `Low`. Loading
   screens keep the game's own higher setting; other mods that use the same API combine with it. Off = the game's own behaviour.
-- Correction to the README's table: the copy also has one frame of its own when Unity brings it into the scene (see the note
-  under the table).
+- New measurements: the README's table and the graphs now come from distance along the test route instead of frame timing, for better accuracy.
 
 ## 1.0.1
 - Fix: a location whose zone unloaded in the exact frame its copy finished (most likely right at a portal, a respawn or another

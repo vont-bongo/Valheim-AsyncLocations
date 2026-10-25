@@ -30,7 +30,7 @@ at `Low`: `BackgroundLoadingBudgetController.ApplyBudget` sets the highest reque
 (`Normal`, then `High`, during a loading screen). Unity uses the setting for its loading threads and as the main thread's time slice
 per frame for integrating loaded assets (Low 2 ms, BelowNormal 4, Normal 10, High 50). The plugin adds one standing `BelowNormal`
 request through `RequestLoadingBudget` while the setting is on (released when off and at shutdown); with nothing loading it costs
-nothing. Measured on an i5-12600KF / RTX 5080 PC (120 fps cap, release build; each load released and unloaded before the next), until
+nothing. Measured on a Ryzen 7 9800X3D / RTX 5080 PC (120 fps cap, release build; each load released and unloaded before the next), until
 loaded / worst frame during the load: the 6 largest locations Low 317 ms / 13-15 ms, BelowNormal 217 / 12-18, Normal 189 / 18-19,
 High 185 / 40-59; 16 Morkhalla rooms at once Low 5.8 s / 34, BelowNormal 1.8 s / 32, Normal 1.7 s / 18.5, High 1.7 s / 58. A single
 large asset can still take a 30-40 ms frame to integrate at any of these priorities.
@@ -40,7 +40,12 @@ large asset can still take a 30-40 ms frame to integrate at any of these priorit
 In the real game (release build, Valheim 1.0.20):
 - Async copies are identical to the game's own (36 of 36 compared: every transform's name, active flag, local position,
   rotation, scale and components).
-- Spawn frame on the main thread: see the table in the README (Winding Tunnels (TheHole01) ~155 -> ~28 ms).
+- In play (1.1.0's measurement, see the README's table and graphs): 3 runs each of vanilla, 1.0.0 and 1.1.0, each run in its own
+  launch on fresh land, flying past Winding Tunnels (TheHole01), the Charred Fortress and a Mistlands guard tower at 8 m/s; every
+  frame recorded, graphs by distance along the route, each run its own line lined up on its spawn spot. One 1.0.0 run was replaced:
+  a garbage collection fell into its Charred Fortress spawn frame (198 ms; the spawn call 18 ms, the other runs 47-49 ms). The
+  Charred Fortress shows after ~2.0 s in all three setups: its wait is not the bundle load (not investigated further). Elsewhere on
+  the routes, frames of 150-320 ms in every setup are new land being generated, not the location.
 - The copy's integration (Unity bringing it into the scene, `EarlyUpdate.UpdateAsyncInstantiate`) is one frame of its own when
   the copy is done, whatever `AsyncInstantiateOperation.SetIntegrationTimeMS` is set to (0.5-16 ms tried; default 2): about 40-48 ms
   for TheHole01 and 31-38 ms for Charred Fortress (release build, same PC). The 1.0.0 measurement missed that frame.
