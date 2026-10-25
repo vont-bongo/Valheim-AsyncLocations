@@ -14,20 +14,28 @@ Main-thread time of a location's spawn frame (release build, measured in-game on
 | Mistlands towers and lighthouses | 60-68 ms | ~12 ms, plus ~1 ms |
 | Small ruins and huts | 1.5-3 ms | 0.3-0.5 ms |
 
+Correction (1.1.0): the "plus" figures above are only the activation of the finished copy. Unity also brings the copy into the
+scene in one frame of its own a few frames after the spawn, which the first measurement missed: on the same PC about 40-48 ms for
+Winding Tunnels and 31-38 ms for Charred Fortress. So the one big frame becomes two smaller ones, not one small one.
+
 A location now appears 10-20 frames (0.1-0.3 s) after the game asks for it, at the edge of the loaded area where nobody sees
 it. Objects in its zone wait for it with the game's own "location still loading" mechanism, so nothing lands before its floor.
 
 ## Install
 
 Copy `AsyncLocations.dll` to `Valheim/BepInEx/plugins/`. Nothing is sent over the network, other players
-don't need it. Setting: `BepInEx/config/AsyncLocations.cfg`, `Enabled` (default on; off = the
-game's own behaviour, live).
+don't need it. Settings in `BepInEx/config/AsyncLocations.cfg` (both default on; off = the game's own behaviour, live):
+`Enabled` (the async copy) and `Faster background loading` (since 1.1.0: location and dungeon room assets load in the
+background at Unity's `BelowNormal` instead of the game's `Low`, so they appear sooner; large locations about a third sooner,
+a dungeon's rooms in ~1.8 s instead of ~5.8 at 120 fps, frames as smooth).
 
 Tested with Valheim 1.0.20 (Unity 6000.0.75f1), BepInEx 5.4.23. A game update that changes the patched method makes the plugin
 log one warning and leave the game alone.
 
 ## Compatibility
 
+- Background loading uses the game's own request list (`BackgroundLoadingBudgetController`), which applies the highest request:
+  loading screens and other mods using it combine with it.
 - Other mods: it patches only `LocationProxy.SpawnLocation`, `ZoneSystem.SpawnLocation` and `ZoneSystem.OnDestroy`. A mod that reads a `LocationProxy`'s instance in the same frame as the
   spawn would see the empty placeholder for a few frames.
 

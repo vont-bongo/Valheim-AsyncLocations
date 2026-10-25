@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.0
+- New setting `Faster background loading` (default on): while you play, the game loads location and dungeon room assets in the
+  background at Unity's lowest priority (`Low`; it asks for more only behind loading screens). The mod adds one standing request
+  for `BelowNormal` through the game's own loading-budget API. Measured at 120 fps: large locations load about a third sooner
+  (317 -> 217 ms), the 16 Morkhalla rooms of a dungeon in about 1.8 s instead of 5.8, with frames as smooth as at `Low`. Loading
+  screens keep the game's own higher setting; other mods that use the same API combine with it. Off = the game's own behaviour.
+- Correction to the README's table: the copy also has one frame of its own when Unity brings it into the scene (see the note
+  under the table).
+
 ## 1.0.1
 - Fix: a location whose zone unloaded in the exact frame its copy finished (most likely right at a portal, a respawn or another
   loading screen, or when moving fast along the edge of the loaded area) threw an error and left that zone marked as still loading
