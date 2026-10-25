@@ -34,7 +34,7 @@ public sealed class Plugin : BaseUnityPlugin
 
 	public const string Name = "AsyncLocations";
 
-	public const string Version = "1.0.0";
+	public const string Version = "1.0.1";
 
 	internal static ManualLogSource Log;
 
@@ -164,10 +164,27 @@ internal static class Locations
 		}
 	}
 
+	// The proxy is gone: its placeholder destroyed, the proxy destroyed, or the proxy still there with its view already detached from
+	// its ZDO (the game's unload resets the view first and destroys the object at the end of the frame). 1.0.0 missed the last case:
+	// a copy finishing in the unload's frame (or a loading screen's) threw in LoadFields, and the zone stayed marked loading until
+	// the next login (its objects never appeared; a teleport into it never ended).
+	private static bool Gone(Item item) => item.Placeholder == null || item.Proxy == null || item.Proxy.m_nview == null || !item.Proxy.m_nview.IsValid();
+
 	private static void Finish(Item item)
 	{
 		GameObject[] result = item.Op.Result;
 		GameObject copy = result != null && result.Length > 0 ? result[0] : null;
+		if (copy != null && Gone(item))
+		{
+			Object.Destroy(copy);
+			item.Original.Release();
+			Unmark(item);
+			if (item.Placeholder != null)
+			{
+				Object.Destroy(item.Placeholder);
+			}
+			return;
+		}
 		if (copy == null)
 		{
 			if (!warned)
@@ -213,7 +230,7 @@ internal static class Locations
 		foreach (Item item in pending)
 		{
 			item.Op.WaitForCompletion();
-			if (item.Placeholder == null)
+			if (Gone(item))
 			{
 				Unmark(item);
 				discard.Add(item);
@@ -239,7 +256,7 @@ internal static class Locations
 		// Proxies unloaded meanwhile (the placeholder is their child): unmark now, destroy the copy when it is done.
 		for (int i = pending.Count - 1; i >= 0; i--)
 		{
-			if (pending[i].Placeholder == null)
+			if (Gone(pending[i]))
 			{
 				Unmark(pending[i]);
 				discard.Add(pending[i]);

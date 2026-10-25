@@ -21,7 +21,7 @@ active flags, local transforms, components).
    again (ZDO-stored field values reach the copy), and remove the zone's loading entry.
 
 **Edge cases handled:** behind a loading screen the game's own path is used and pending copies finish at once; a proxy
-unloaded mid-copy discards its copy, releases the reference and unmarks the zone; the zone's sector is remembered at the start
+unloaded mid-copy (its placeholder gone, or its view already detached from its ZDO in the unload's frame: 1.0.1) discards its copy, releases the reference and unmarks the zone; the zone's sector is remembered at the start
 (ZDOs are pooled and may be reused); leaving the world (`ZoneSystem.OnDestroy`) waits for pending copies and destroys them.
 
 ## Measured

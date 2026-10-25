@@ -1,11 +1,11 @@
 # AsyncLocations
 
-100% Vibe coded.
+100% Vibe coded for personal use, I couldn't find any other mod that had a fix for this so I investigated it using Claude. I had stutters when running through unexplored areas that annoyed me. Since this fixed the issue for me I decided to upload it. 
 
 Valheim runs on Unity 6 since February 2026, which can copy objects on worker threads (`Object.InstantiateAsync`). This BepInEx mod uses it so ruins, towers, fortresses and dungeon entrances load in with noticeably less stutter: the game copies a location you come near
 in a single frame on the main thread; this mod has Unity copy it on its worker threads instead.
 
-Main-thread time of a location's spawn frame (release build, measured in-game):
+Main-thread time of a location's spawn frame (release build, measured in-game on a i5-12600KF, results may vary):
 
 | Location | Vanilla | With AsyncLocations |
 |---|---|---|
